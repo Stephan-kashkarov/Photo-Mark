@@ -55,7 +55,9 @@ class Face_Classifier(keras.models.Model):
         ]
 
     def call(self, face):
-        pass
+        for layer in self.layers:
+            face = layer(face)
+        return face
 
     def train(self, labels=None, images=None):
         with tf.GradientTape() as tape:
@@ -70,12 +72,19 @@ class Faster_RCNN(keras.models.Model):
         super().__init__()
         self.region_proposer = Region_Proposer()
         self.face_classifier = Face_Classifier()
-        self.region_proposer.train()
-        self.face_classifier.train()
+        
 
     def call(self, frame):
-        region_proposals = self.region_proposer.predict(frame)
-        for index, region in region_extraction(frame, region_proposals):
+        regions = self.region_proposer.predict(frame)
+        for index, region in region_extraction(frame, regions):
             if self.face_classifier.predict(region, batch_size=1)[0]:
                 regions.pop(index)
         return regions
+
+    def train(self, labels=None, images=None)
+        self.region_proposer.train(labels, images)
+        face_data = self.region_proposer(images)
+        for index, image in enumerate(images):
+            pass
+            # Find regions outside images
+        self.face_classifier.train()
