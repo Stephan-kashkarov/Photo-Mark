@@ -1,5 +1,3 @@
-import cv2
-
 import keras
 import numpy as np
 import pandas as pd
@@ -9,7 +7,7 @@ class RPN(keras.models.Model):
     def __init__(self, **kwargs):
         self.anchors = kwargs.get('anchors', 9)
         self.base = keras.layers.Conv2D(
-            256,
+            512,
             (3, 3),
             padding='same',
             activation='relu',
@@ -29,11 +27,21 @@ class RPN(keras.models.Model):
         )
 
     def call(self, data):
-        pass
+        x = self.base(data)
+        return self.classifier(x), self.regressor(x)
 
     def train(self, labels, data):
         pass
 
+class RCNN(keras.models.Model):
+    def __init__(self):
+        pass
+
+    def call(self, data):
+        pass
+    
+    def train(self, labels, data):
+        pass
 
 class Faster_RCNN(keras.models.Model):
     def __init__(self):
@@ -78,6 +86,7 @@ class Faster_RCNN(keras.models.Model):
         ])
 
         self.rpn = RPN()
+        self.classifier = RCNN()
     
     def call(self, data):
         pass
