@@ -5,7 +5,9 @@ import tensorflow as tf
 
 class RPN(keras.models.Model):
     def __init__(self, **kwargs):
-        self.anchors = kwargs.get('anchors', 9)
+        self.num_anchors = kwargs.get('anchors', 9)
+        self.objectness_limit = kwargs.get('objectness_limit', 0.7)
+
         self.base = keras.layers.Conv2D(
             512,
             (3, 3),
@@ -27,13 +29,20 @@ class RPN(keras.models.Model):
         )
 
     def call(self, data):
-        x = self.base(data)
-        return self.classifier(x), self.regressor(x)
+        for point in np.ndindex(data):
+            for coords, anchor in self.anchors(point):
+                if self.classifier(anchor) > self.objectness_limit:
+                    yield self.regressor(coords)
+
+        
 
     def train(self, labels, data):
         pass
 
-class RCNN(keras.models.Model):
+    def anchors(self, point):
+        pass
+
+class Detector(keras.models.Model):
     def __init__(self):
         pass
 
@@ -47,14 +56,16 @@ class Faster_RCNN(keras.models.Model):
     def __init__(self):
         self.optimizer = keras.optimizers.Adam
 
-        self.vgg16 = keras.applications.vgg16(weights='imagenet')
+        self.vgg16 = keras.applications.vgg16.VGG16(weights='imagenet', include_top=False)
 
         self.rpn = RPN()
-        self.classifier = RCNN()
+        self.detector = Detector()
     
     def call(self, data):
         data = self.vgg16(data)
-        regions, confidence = self.rpn(data)
+        regions = self.rpn(data)
+        for region in regions:
+            yield region, self.detector(region, data)
 
     def train(self, labels, data):
         pass
