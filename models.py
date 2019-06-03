@@ -104,6 +104,22 @@ class Faster_RCNN(keras.models.Model):
     ######################################################
     #### Faster Regional Convolutional Neural Network ####
     ######################################################
+    
+    This network is a deep learning wrapper for a VGG16, RPN
+    and a detector nerual network. Together these are used to
+    generate bounding boxes on input images.
+
+    The image is first put through a VGG16 pretrained CNN.
+    The final convolution of which is fed through the RPN
+    which returns a serise of bounding boxes. Each of these
+    boxes is then classified by the detector network.
+
+    Keyword Arguments:
+        ->
+
+    Methods:
+        -> call    -- Binding to object call method
+        -> train   -- Training method, used to train network
     """
     def __init__(self):
         self.optimizer = keras.optimizers.Adam
