@@ -29,7 +29,8 @@ class RPN(keras.models.Model):
     Methods:
         -> call    -- Binding to object call method
         -> train   -- Training method, used to train network
-        -> anchors -- used to generate anchors given coord
+        -> anchors -- Used to generate anchors given coord
+        -> regress -- Converts regression conv output into np.ndarrays
     """
     def __init__(self, **kwargs):
         self.num_anchors = kwargs.get('anchors', 9)
@@ -56,16 +57,22 @@ class RPN(keras.models.Model):
         )
 
     def call(self, data):
+        data = self.base(data)
+
+        # sliding window predictor
         for point in np.ndindex(data):
             for coords, anchor in self.anchors(point):
                 if self.classifier(anchor) > self.objectness_limit:
-                    yield self.regressor(coords)
+                    yield self.regress(self.regressor(coords))
 
 
     def train(self, labels, data):
         pass
 
     def anchors(self, point):
+        pass
+
+    def regress(self, box):
         pass
 
 class Detector(keras.models.Model):
