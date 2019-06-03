@@ -47,49 +47,14 @@ class Faster_RCNN(keras.models.Model):
     def __init__(self):
         self.optimizer = keras.optimizers.Adam
 
-        self.vgg16 = keras.models.Sequential([
-            keras.layers.ZeroPadding2D((1,1),input_shape=(3,224,224)),
-            keras.layers.Convolution2D(64, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(64, 3, 3, activation='relu'),
-            keras.layers.MaxPooling2D((2,2), strides=(2,2)),
-
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(128, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(128, 3, 3, activation='relu'),
-            keras.layers.MaxPooling2D((2,2), strides=(2,2)),
-
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(256, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(256, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(256, 3, 3, activation='relu'),
-            keras.layers.MaxPooling2D((2,2), strides=(2,2)),
-
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.MaxPooling2D((2,2), strides=(2,2)),
-
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.ZeroPadding2D((1,1)),
-            keras.layers.Convolution2D(512, 3, 3, activation='relu'),
-            keras.layers.MaxPooling2D((2,2), strides=(2,2)),
-        ])
+        self.vgg16 = keras.applications.vgg16(weights='imagenet')
 
         self.rpn = RPN()
         self.classifier = RCNN()
     
     def call(self, data):
-        pass
+        data = self.vgg16(data)
+        regions, confidence = self.rpn(data)
 
     def train(self, labels, data):
         pass
