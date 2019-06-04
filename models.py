@@ -22,18 +22,15 @@ class RPN(keras.models.Model):
     anchor is selected to have its bounding box regressed.
     All matching bounding boxes are then given as output.
 
-    Keyword Arguements:
-        -> anchors            -- (default, 9)   | Number of anchors per point               
+    Keyword Arguements:        
         -> objectivness_limit -- (default, 0.7) | objetivness threshold for selected object 
 
     Methods:
         -> call    -- Binding to object call method
         -> train   -- Training method, used to train network
         -> anchors -- Used to generate anchors given coord
-        -> regress -- Converts regression conv output into np.ndarrays
     """
     def __init__(self, **kwargs):
-        self.num_anchors = kwargs.get('anchors', 9)
         self.objectness_limit = kwargs.get('objectness_limit', 0.7)
 
         self.base = keras.layers.Conv2D(
@@ -44,13 +41,13 @@ class RPN(keras.models.Model):
             kernel_initializer='normal'
         )
         self.classifier = keras.layers.Conv2D(
-            self.anchors,
+            9,
             (1, 1),
             activation='sigmoid',
             kernel_initializer='uniform',
         )
         self.regressor = keras.layers.Conv2D(
-            self.anchors * 4,
+            9 * 4,
             (1, 1),
             activation='linear',
             kernel_initializer='zero',
@@ -60,20 +57,24 @@ class RPN(keras.models.Model):
         data = self.base(data)
 
         # sliding window predictor
-        for point in np.ndindex(data):
-            for coords, anchor in self.anchors(point):
-                if self.classifier(anchor) > self.objectness_limit:
-                    yield self.regress(self.regressor(coords))
-
+        for anchor in self.anchors(np.ndindex(data)):
+            objectness = self.classifier(anchor, data)
+            if objectness > 0.7:
+                regressed_box = self.regressor(anchor, data)
+                if regressed_box[2] > 10 and regressed_box[3] > 10:
+                    yield regressed_box, objectness
 
     def train(self, labels, data):
+        # for anchor in prediction:
+        #     with tf.GraidentTape() as tape: 
+        #         loss = ()
         pass
+
 
     def anchors(self, point):
-        pass
-
-    def regress(self, box):
-        pass
+        for aspect in [(2, 1), (1, 1), (1, 2)]:
+            for scale in [128, 192, 256]:
+                yield (point[0], point[1], aspect[0]*scale, aspect[1]*scale)
 
 class Detector(keras.models.Model):
     """
