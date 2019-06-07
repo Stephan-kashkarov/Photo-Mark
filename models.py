@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 
+from losses import smooth_l1_loss
 class RPN(keras.models.Model):
     """
     ######################################
@@ -23,7 +24,7 @@ class RPN(keras.models.Model):
     All matching bounding boxes are then given as output.
 
     Keyword Arguements:        
-        -> objectivness_limit -- (default, 0.7) | objetivness threshold for selected object 
+        -> objectness_limit -- (default, 0.7) | objetivness threshold for selected object 
 
     Methods:
         -> call    -- Binding to object call method
@@ -32,43 +33,59 @@ class RPN(keras.models.Model):
     """
     def __init__(self, **kwargs):
         self.objectness_limit = kwargs.get('objectness_limit', 0.7)
+        self.const = kwargs.get('loss_const', 1)
+
+        self.optimiser = keras.optimizers.Adam()
 
         self.base = keras.layers.Conv2D(
-            512,
+            256,
             (3, 3),
             padding='same',
             activation='relu',
             kernel_initializer='normal'
         )
+
         self.classifier = keras.layers.Conv2D(
             9,
             (1, 1),
             activation='sigmoid',
             kernel_initializer='uniform',
         )
+
         self.regressor = keras.layers.Conv2D(
             9 * 4,
             (1, 1),
-            activation='linear',
             kernel_initializer='zero',
         )
 
-    def call(self, data):
+    def call(self, data, training=False):
         data = self.base(data)
 
         # sliding window predictor
         for anchor in self.anchors(np.ndindex(data)):
             objectness = self.classifier(anchor, data)
-            if objectness > 0.7:
+            if objectness > self.objectness_limit:
                 regressed_box = self.regressor(anchor, data)
                 if regressed_box[2] > 10 and regressed_box[3] > 10:
-                    yield regressed_box, objectness
+                    if not training:
+                        yield regressed_box, objectness
+                    else:
+                        yield regressed_box, objectness, anchor
+            else:
+                if not training:
+                    yield None, objectness
+                else:
+                    yield None, objectness, anchor
 
     def train(self, labels, data):
-        # for anchor in prediction:
-        #     with tf.GraidentTape() as tape: 
-        #         loss = ()
-        pass
+        prediction = self(data, training=True)
+        with tf.GradientTape() as tape:
+            for index, pred, anchor in enumerate(prediction):
+                cls_loss += keras.losses.binary_crossentropy(labels[index][1], pred[1])
+                reg_loss += smooth_l1_loss(labels[index][0], pred[0], anchor)
+            loss = (cls_loss / 256) + (self.const * (reg_loss/(9*256)))
+        grads = tape.gradient(loss, self.trainable_weights)
+        self.optimiser.apply_gradients(zip(grads, self.trainable_weights))
 
 
     def anchors(self, point):
