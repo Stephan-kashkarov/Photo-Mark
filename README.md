@@ -11,14 +11,14 @@ The Network takes an image from a dataset or the opencv camera which it then pre
 
 ### Libraries
 The following libraries where used in development:
- - Tensorflow 1.13
+ - Tensorflow 1.13 |
     Used as a backend for the mathematical operations. Main uses are the training where a gradent tape is laied out. Apon which the network is called and a loss is calculated. This loss is then used to calculate gradients which are then applied by an optimiser (I prefer adam). However as it is the backend for keras saying which parts of the code use it and which parts dont is kind of difficult.
- - Keras 2.2.4
+ - Keras 2.2.4 |
     Used to structure code. Main uses are the high level layer wrappers. These are used to do operations such as convlution, pooling and what ever verb dense neural networks use on the data. It is also used in the constructors for the classes themselves as they are extentions of the model base class.
- - Numpy 1.16.3
+ - Numpy 1.16.3 |
     Used for "nd" indexing. I used numpy sparingly as Tensorflow already directly implements most of numpys features. THis is a bit ironic as TF is build upon numpy. Main use was the 2d indexing somewhere in `models.py`
- - Opencv 4.1.0.25
-    Open CV is not yet implemented but when the final product is ready it will be used to 
+ - Opencv 4.1.0.25 | 
+    Open CV is not yet implemented but when the final product is ready it will be used to get image data from the webcam on my laptop.
 
 The code is written mostly under the Keras ML framework. This framework is essentially a high level wrapper for tensorflow which makes code really readable. I used the keras.models.Model base class to implement my own three models as seen in `models.py`. This descition was inspired by the right code box on https://www.tensorflow.org/overview/. 
 
@@ -44,7 +44,7 @@ If you wish to not try out your trained network with your own choice of mnist nu
 
 This will save your trained model for more testing.
 
-Now to the important part, What is the demo actually doing? dosent look like much. The demo takes a widely used dataset called MNIST which is a massive collection of hand written digits which it then predicts. The process at the begining is the network repeatedly runing over a larger portion of the data to slowly improve the predictions of the model (as discussed before). This new model is then tested on a smaller section it has never seen to see how accurate the network really is. THis is the number that gets output at the end.
+Now to the important part, What is the demo actually doing? dosent look like much. The demo takes a widely used dataset called MNIST which is a massive collection of hand written digits which it then predicts. The process at the begining is the network repeatedly runing over a larger portion of the data to slowly improve the predictions of the model (as discussed before). This new model is then tested on a smaller section it has never seen to see how accurate the network really is. This is the number that gets output at the end.
 
 ## References & Inspirations
 
