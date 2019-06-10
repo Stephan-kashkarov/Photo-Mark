@@ -41,6 +41,7 @@ class RPN(keras.models.Model):
         -> anchors -- Used to generate anchors given coord
     """
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.objectness_limit = kwargs.get('objectness_limit', 0.7)
         self.const = kwargs.get('loss_const', 1)
 
@@ -171,10 +172,12 @@ class Classifier(keras.models.Model):
         -> call    -- Binding to object call method
         -> train   -- Training method, used to train network
     """
-    def __init__(self):
-        self.layers = [
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.core = [
+            keras.layers.Input(shape=(28, 28, 1)),
             # Conv block 1
-            keras.layers.Conv2D(128, (3, 3), activation='relu'),
+            keras.layers.Conv2D(128, (3, 3), activation='relu'), # retrofitted for demo (inputsize)
             keras.layers.Conv2D(128, (3, 3), activation='relu'),
             keras.layers.AvgPool2D(2, 2),
 
@@ -187,7 +190,7 @@ class Classifier(keras.models.Model):
             keras.layers.Flatten(),
             keras.layers.Dense(256, activation='relu'),
             keras.layers.Dense(64, activation='sigmoid'),
-            keras.layers.Dense(2, activation='softmax'),
+            keras.layers.Dense(10, activation='softmax') # retrofitted for demo (classifications)
         ]
 
     def call(self, data):
@@ -201,7 +204,7 @@ class Classifier(keras.models.Model):
         
         """
         # TODO: Figure out how to do variable input sizes
-        for layer in self.layers:
+        for layer in self.core:
             data = layer(data)
         return data
 
@@ -241,7 +244,8 @@ class Faster_RCNN(keras.models.Model):
         -> call    -- Binding to object call method
         -> train   -- Training method, used to train network
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.optimizer = tf.train.AdamOptimizer()
 
         self.vgg16 = keras.applications.vgg16.VGG16(weights='imagenet', include_top=False)
