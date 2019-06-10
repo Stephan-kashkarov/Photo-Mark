@@ -8,10 +8,10 @@ An explanation of the operation of the code itself can be found in the class doc
 
 ### Libraries
 The following libraries where used in development:
-    -> Tensorflow 1.13 
-    -> Keras 2.2.4
-    -> Numpy 1.16.3
-    -> Opencv 4.1.0.25
+ - Tensorflow 1.13 
+ - Keras 2.2.4
+ - Numpy 1.16.3
+ - Opencv 4.1.0.25
 
 The code is written mostly under the Keras ML framework. This framework is essentially a high level wrapper for tensorflow which makes code really readable. I used the keras.models.Model base class to implement my own three models as seen in `models.py`. This descition was inspired by the right code box on https://www.tensorflow.org/overview/. 
 
