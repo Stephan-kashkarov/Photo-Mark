@@ -6,12 +6,19 @@ Due to setting my expectations too high (as per usual) I did not finish my imple
 
 An explanation of the operation of the code itself can be found in the class docstrings within `models.py`
 
+### Operation
+The Network takes an image from a dataset or the opencv camera which it then predicts bounding boxes apon. Thes boxes are then classifier returning a location and a class. This allows for the network to be used in survellance. The classifier can be retrofit with facial recognition. 
+
 ### Libraries
 The following libraries where used in development:
- - Tensorflow 1.13 
+ - Tensorflow 1.13
+    Used as a backend for the mathematical operations. Main uses are the training where a gradent tape is laied out. Apon which the network is called and a loss is calculated. This loss is then used to calculate gradients which are then applied by an optimiser (I prefer adam). However as it is the backend for keras saying which parts of the code use it and which parts dont is kind of difficult.
  - Keras 2.2.4
+    Used to structure code. Main uses are the high level layer wrappers. These are used to do operations such as convlution, pooling and what ever verb dense neural networks use on the data. It is also used in the constructors for the classes themselves as they are extentions of the model base class.
  - Numpy 1.16.3
+    Used for "nd" indexing. I used numpy sparingly as Tensorflow already directly implements most of numpys features. THis is a bit ironic as TF is build upon numpy. Main use was the 2d indexing somewhere in `models.py`
  - Opencv 4.1.0.25
+    Open CV is not yet implemented but when the final product is ready it will be used to 
 
 The code is written mostly under the Keras ML framework. This framework is essentially a high level wrapper for tensorflow which makes code really readable. I used the keras.models.Model base class to implement my own three models as seen in `models.py`. This descition was inspired by the right code box on https://www.tensorflow.org/overview/. 
 
@@ -41,10 +48,11 @@ Now to the important part, What is the demo actually doing? dosent look like muc
 
 ## References & Inspirations
 
-This work would not be possible if it was not for (the original paper on faster RCNNs)[https://arxiv.org/pdf/1506.01497.pdf].
+This work would not be possible if it was not for [the original paper on faster RCNNs](https://arxiv.org/pdf/1506.01497.pdf).
 
 Places code was directly ctrl-c ctrl-ved from:
  - https://www.tensorflow.org/overview/ (for quick example code & inspiration)
  - https://stackoverflow.com/ (various places)
  - https://github.com/jinfagang/keras_frcnn/blob/master/keras_frcnn/vgg.py (for the cls and reg layers in RPN (didnt work tho lol))
+ - https://keras.io/ (its an API reference)
 
