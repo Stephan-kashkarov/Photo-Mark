@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras
+import timeit.default_timer as timer
 
 # Because the code dosent work i though i would demonstraght the classifier part of the network
 
@@ -47,5 +48,16 @@ model.compile(
 his_train = model.fit(x_train, y_train, epochs=5, validation_data=(x_test, y_test))
 print("Training complete testing:")
 loss, accuracy = model.evaluate(x_test, y_test)
-print(f"Accuracy: {accuracy}%")
+times = []
+for i in range(len(x_train), 100):
+    start = timer()
+    model.predict(x_train[:i])
+    end = timer()
+    times.append(end-start)
+# plt.title("Running time over Input size")
+# plt.ylabel("Running time")
+# plt.xlabel("Input size")
+# plt.plot(times, )
+# plt.show()
+print("Accuracy: {}%".format(accuracy))
 
