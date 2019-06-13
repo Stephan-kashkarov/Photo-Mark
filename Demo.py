@@ -46,18 +46,19 @@ model.compile(
 )
 
 his_train = model.fit(x_train, y_train, epochs=5, validation_data=(x_test, y_test))
-print("Training complete testing:")
-loss, accuracy = model.evaluate(x_test, y_test)
-times = []
-for i in range(len(x_train), 100):
-    start = timer()
-    model.predict(x_train[:i])
-    end = timer()
-    times.append(end-start)
-# plt.title("Running time over Input size")
-# plt.ylabel("Running time")
-# plt.xlabel("Input size")
-# plt.plot(times, )
-# plt.show()
-print("Accuracy: {}%".format(accuracy))
+model.save('model.h5')
+# print("Training complete testing:")
+# loss, accuracy = model.evaluate(x_test, y_test)
+# times = []
+# for i in range(len(x_train), 100):
+#     start = timer()
+#     model.predict(x_train[:i])
+#     end = timer()
+#     times.append(end-start)
+# # plt.title("Running time over Input size")
+# # plt.ylabel("Running time")
+# # plt.xlabel("Input size")
+# # plt.plot(times, )
+# # plt.show()
+# print("Accuracy: {}%".format(accuracy))
 
