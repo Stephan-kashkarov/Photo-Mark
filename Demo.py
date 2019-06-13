@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras
-import timeit.default_timer as timer
+# import timeit.default_timer as timer
 
 # Because the code dosent work i though i would demonstraght the classifier part of the network
 
@@ -23,19 +23,26 @@ x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 
 model = keras.models.Sequential([
     # Conv block 1
-    keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)), # retrofitted for demo (inputsize)
-    keras.layers.Conv2D(32, (3, 3), activation='relu'),
+    keras.layers.Conv2D(128, (3, 3), activation='relu', shape=(28, 28, 1)), # retrofitted for demo (inputsize)
+    keras.layers.Conv2D(128, (3, 3), activation='relu'),
     keras.layers.AvgPool2D(2, 2),
 
-    # Conv block 1
-    keras.layers.Conv2D(64, (3, 3), activation='relu'),
-    keras.layers.Conv2D(64, (3, 3), activation='sigmoid'),
+    # Conv block 2
+    keras.layers.Conv2D(256, (3, 3), activation='relu'),
+    keras.layers.Conv2D(256, (3, 3), activation='sigmoid'),
+    keras.layers.AvgPool2D(2, 2),
+
+    # Conv block 3
+    keras.layers.Conv2D(512, (3, 3), activation='relu'),
+    keras.layers.Conv2D(512, (3, 3), activation='sigmoid'),
     keras.layers.AvgPool2D(2, 2),
 
     # Dense layer
     keras.layers.Flatten(),
-    keras.layers.Dense(128, activation='relu'),
-    keras.layers.Dense(64, activation='sigmoid'),
+    keras.layers.Dense(256, activation='relu'),
+    keras.layers.Dense(128, activation='sigmoid'),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(32, activation='sigmoid'),
     keras.layers.Dense(10, activation='softmax') # retrofitted for demo (classifications)
 ])
 

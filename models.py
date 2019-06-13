@@ -181,15 +181,22 @@ class Classifier(keras.models.Model):
             keras.layers.Conv2D(128, (3, 3), activation='relu'),
             keras.layers.AvgPool2D(2, 2),
 
-            # Conv block 1
+            # Conv block 2
             keras.layers.Conv2D(256, (3, 3), activation='relu'),
             keras.layers.Conv2D(256, (3, 3), activation='sigmoid'),
+            keras.layers.AvgPool2D(2, 2),
+
+            # Conv block 3
+            keras.layers.Conv2D(512, (3, 3), activation='relu'),
+            keras.layers.Conv2D(512, (3, 3), activation='sigmoid'),
             keras.layers.AvgPool2D(2, 2),
 
             # Dense layer
             keras.layers.Flatten(),
             keras.layers.Dense(256, activation='relu'),
-            keras.layers.Dense(64, activation='sigmoid'),
+            keras.layers.Dense(128, activation='sigmoid'),
+            keras.layers.Dense(64, activation='relu'),
+            keras.layers.Dense(32, activation='sigmoid'),
             keras.layers.Dense(10, activation='softmax') # retrofitted for demo (classifications)
         ]
 
