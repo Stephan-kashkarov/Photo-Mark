@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import tensorflow as tf
 import keras
 
@@ -43,6 +44,8 @@ model.compile(
     metrics=['accuracy']
 )
 
-model.fit(x_train, y_train, epochs=10)
+his_train = model.fit(x_train, y_train, epochs=5, validation_data=(x_test, y_test))
 print("Training complete testing:")
-model.evaluate(x_test, y_test)
+loss, accuracy = model.evaluate(x_test, y_test)
+print(f"Accuracy: {accuracy}%")
+
